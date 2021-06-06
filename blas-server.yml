@@ -8,11 +8,16 @@ Parameters:
     Description: An environment name that will be prefixed to resource names
     Type: String
     Default: UdagramApp
+  
+  KeyBlasSSH:
+    Description: An environment ssh key name that will be prefixed to the ssh key names
+    Type: String
+    Default: emrh
 
 Mappings:
   WebAppRegion:
     us-east-2:
-      HVM64: ami-0d1cd67c26f5fca19
+      HVM64: ami-077e31c4939f6a2f3
 
 ############################### Resources #################################
 Resources:
@@ -90,11 +95,11 @@ Resources:
             apt-get install apache2 -y
             systemctl start apache2.service
             sudo rm /var/www/html/index.html
-            sudo aws s3 cp s3://blas-app-rmorel/blas.html /var/www/html
+            sudo aws s3 cp s3://blas-app/blas-web.html /var/www/html
             systemctl restart apache2.service
         IamInstanceProfile: !Ref BlasIamInstanceProfile
         SecurityGroupIds:
-          - Ref: BastionSecurityGroup
+          - Ref: WebServerSecGroup
         SubnetId:
           Fn::ImportValue: !Sub '${EnvironmentName}-PUB-SN'
         ImageId: !FindInMap [WebAppRegion, !Ref 'AWS::Region', HVM64]
